@@ -292,14 +292,14 @@ void verlet_vectorize(double *mimas_positions, double min_radius, double max_rad
         //double epsilon = randfrom(-1, 1);
         //double r = randfrom(min_radius,max_radius);
         double r = min_radius + (max_radius - min_radius) * fraction;
-        old_r1[3 * i] = r * cos(theta);
-        old_r1[3 * i + 1] = r * sin(theta);
-        old_r1[3 * i + 2] = 0;
+        old_r1[3*i] = r * cos(theta);
+        old_r1[3*i + 1] = r * sin(theta);
+        old_r1[3*i + 2] = 0;
         fraction = r / dist_mimas_saturn;
         double v = 2 * M_PI * dist_mimas_saturn / (mimas_period * sqrt(fraction));
-        old_v1[3 * i] = -1 * v * sin(theta);
-        old_v1[3 * i + 1] = v * cos(theta);
-        old_v1[3 * i + 2] = 0;
+        old_v1[3*i] = -1 * v * sin(theta);
+        old_v1[3*i + 1] = v * cos(theta);
+        old_v1[3*i + 2] = 0;
         //printf("r = %f  theta = %f  x = %f  y = %f  z = %f\n", r, theta, *(old_r1 + 3 * i), *(old_r1 + 3 * i + 1), *(old_r1 + 3 * i + 2));
     }
     printf("Done intialising.\n");
@@ -336,7 +336,7 @@ void verlet_vectorize(double *mimas_positions, double min_radius, double max_rad
         if (j >= upper_limit)
         {
             printf("i= %i/%i r=%f v=%f a=%f\n", j+1, t_end, norm(old_r1 + p), norm(old_v1 + p), norm(old_a1 + p));
-            step %= packet_size;                    // step=0,1,2,...,packet_size-1,0,1,2,...
+            step %= packet_size; // step=0,1,2,...,packet_size-1,0,1,2,...
             append_packet_2darray(packet, new_r1, step, n_particles); // length of packet currently will be: step+1
             if (step == packet_size - 1 || j == t_end - 1)
             {
@@ -403,14 +403,14 @@ void verlet_vectorize_subcycles(double min_radius, double max_radius, int n_orbi
         //double epsilon = randfrom(-1, 1);
         //double r = randfrom(min_radius,max_radius);
         double r = min_radius + (max_radius - min_radius) * fraction;
-        old_r1[3 * i] = r * cos(theta);
-        old_r1[3 * i + 1] = r * sin(theta);
-        old_r1[3 * i + 2] = 0;
+        old_r1[3*i] = r * cos(theta);
+        old_r1[3*i + 1] = r * sin(theta);
+        old_r1[3*i + 2] = 0;
         fraction = r / dist_mimas_saturn;
         double v = 2 * M_PI * dist_mimas_saturn / (mimas_period * sqrt(fraction));
-        old_v1[3 * i] = -1 * v * sin(theta);
-        old_v1[3 * i + 1] = v * cos(theta);
-        old_v1[3 * i + 2] = 0;
+        old_v1[3*i] = -1 * v * sin(theta);
+        old_v1[3*i + 1] = v * cos(theta);
+        old_v1[3*i + 2] = 0;
         //printf("r = %f  theta = %f  x = %f  y = %f  z = %f\n", r, theta, *(old_r1 + 3 * i), *(old_r1 + 3 * i + 1), *(old_r1 + 3 * i + 2));
     }
     printf("Done intialising.\n");
@@ -429,7 +429,7 @@ void verlet_vectorize_subcycles(double min_radius, double max_radius, int n_orbi
     
     for (int j = 0; j < t_end/subcycle; j++)
     {
-        step %= packet_size;                    // step=0,1,2,...,packet_size-1,0,1,2,...
+        step %= packet_size; // step=0,1,2,...,packet_size-1,0,1,2,...
         
         /* radial vel */
         norm_2darray(a1, old_r1, n_particles);
