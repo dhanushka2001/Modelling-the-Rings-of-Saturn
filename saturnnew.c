@@ -308,22 +308,22 @@ void verlet_vectorize(double *mimas_positions, double min_radius, double max_rad
     // remember to just save the last orbit, j > n = (n_orbits - 1)*mimas_period/timestep
     old_r = mimas_positions; //we just need first array so 1D array
 
-    int m = (n_orbits * mimas_period / timestep);
+    int t_end = n_orbits * mimas_period / timestep; // # of positions for n_orbits
     int upper_limit = (n_orbits - 1) * mimas_period / timestep; // equal to zero if n_orbits = 1
     int step = 0;
-    for (int j = 1; j < m; j++)
+    for (int j = 1; j < t_end; j++)
     {
-        //printf("%i/%i\n",j+1,m);
+        //printf("%i/%i\n",j+1,t_end);
         int p = 0 * 3;
         //printf("%f %f %f\n",*(old_r1+p), *(old_r1+p+1), *(old_r1+p+2)); // first array
         new_r = mimas_positions + 3 * j;
         acceleration_particle_2darray(old_a1, old_r, old_r1, a1, a2, n); // old_a1
-        //printf("i= %i/%i r=%f v=%f a=%f\n", j+1, m, norm(old_r1 + p), norm(old_v1 + p), norm(old_a1 + p));
+        //printf("i= %i/%i r=%f v=%f a=%f\n", j+1, t_end, norm(old_r1 + p), norm(old_v1 + p), norm(old_a1 + p));
 
         scalar_mult_2darray(a1, old_v1, timestep, n); // a1
-        //printf("i= %i/%i r=%f v=%f a=%f\n", j+1, m, norm(old_r1 + p), norm(old_v1 + p), norm(old_a1 + p));
+        //printf("i= %i/%i r=%f v=%f a=%f\n", j+1, t_end, norm(old_r1 + p), norm(old_v1 + p), norm(old_a1 + p));
         add_2darray(a1, old_r1, a1, n); // reuse a1
-        //printf("i= %i/%i r=%f v=%f a=%f\n", j+1, m, norm(old_r1 + p), norm(old_v1 + p), norm(old_a1 + p));
+        //printf("i= %i/%i r=%f v=%f a=%f\n", j+1, t_end, norm(old_r1 + p), norm(old_v1 + p), norm(old_a1 + p));
         scalar_mult_2darray(a2, old_a1, 0.5 * timestep * timestep, n); // a3
         add_2darray(new_r1, a1, a2, n); // new_r1
         //new_r1 = add(add(old_r1,scalar_mult(old_v1,timestep)),scalar_mult(old_a1,0.5*pow(timestep,2)));
@@ -336,10 +336,10 @@ void verlet_vectorize(double *mimas_positions, double min_radius, double max_rad
 
         if (j >= upper_limit)
         {
-            printf("i= %i/%i r=%f v=%f a=%f\n", j+1, m, norm(old_r1 + p), norm(old_v1 + p), norm(old_a1 + p));
+            printf("i= %i/%i r=%f v=%f a=%f\n", j+1, t_end, norm(old_r1 + p), norm(old_v1 + p), norm(old_a1 + p));
             step %= packet_size;                    // step=0,1,2,...,packet_size-1,0,1,2,...
             append_packet_2darray(packet, new_r1, step, n); // length of packet currently will be: step+1
-            if (step == packet_size - 1 || j == m - 1)
+            if (step == packet_size - 1 || j == t_end - 1)
             {
                 //append txt file with packet, step will then cycle back to zero on next loop and will reuse packet.
                 particle_text_file_append(packet, (step + 1) * n); // the n doesn't really matter, wont make sense in this case, and it's not used in text append function anyway.
@@ -423,7 +423,7 @@ void verlet_vectorize_subcycles(double min_radius, double max_radius, int n_orbi
     double old_r[3] = {mimas_periapsis, 0, 0};    // elliptic
     double new_r[3];
 
-    int t_end = n_orbits * mimas_period / (timestep); // # of positions for n_orbits
+    int t_end = n_orbits * mimas_period / timestep; // # of positions for n_orbits
     // int t = mimas_period / timestep; // # of positions for 1 orbit
     //int upper_limit = (n_orbits - 1) * mimas_period / (timestep); // equal to zero if n_orbits = 1. divide by: X = # of subcycles
     int step = 0;
