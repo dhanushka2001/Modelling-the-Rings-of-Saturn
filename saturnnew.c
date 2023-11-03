@@ -273,9 +273,9 @@ void verlet_vectorize(double *mimas_positions, double min_radius, double max_rad
     //a3 = malloc(n_particles * 3 * sizeof(double));
     //a4 = malloc(n_particles * sizeof(double));
 
-    //total number of iterations is (int) (n_orbits * t / timestep)
-    //we just need last orbit, so (int) (t/timestep)
-    //so packet size should be a fraction of that, maybe 1/10 or 1/100.
+    // total number of iterations is (int) (n_orbits * t / timestep)
+    // we just need last orbit, so (int) (t/timestep)
+    // so packet size should be a fraction of that, maybe 1/10 or 1/100.
 
     double mimas_period = 2 * M_PI * sqrt(pow(dist_mimas_saturn, 3) / (G * saturn_mass));
     //int n_positions = (int)mimas_period / timestep;
