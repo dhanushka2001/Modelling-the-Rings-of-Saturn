@@ -257,22 +257,21 @@ void two_arr1d_text_file_append(double *arr, int arr_length)
 
 void verlet_vectorize(double *mimas_positions, double min_radius, double max_radius, int n_orbits, int n_particles, double timestep)
 {
-    int n = n_particles;
     double *old_r, *new_r;
     double *old_r1, *new_r1;
     double *old_a1, *new_a1;
     double *old_v1, *new_v1;
     double *a1, *a2;
 
-    new_r1 = malloc(n * 3 * sizeof(double));
-    new_v1 = malloc(n * 3 * sizeof(double));
-    old_a1 = malloc(n * 3 * sizeof(double));
-    new_a1 = malloc(n * 3 * sizeof(double));
-    a1 = malloc(n * 3 * sizeof(double));
-    a2 = malloc(n * 3 * sizeof(double));
+    new_r1 = malloc(n_particles * 3 * sizeof(double));
+    new_v1 = malloc(n_particles * 3 * sizeof(double));
+    old_a1 = malloc(n_particles * 3 * sizeof(double));
+    new_a1 = malloc(n_particles * 3 * sizeof(double));
+    a1 = malloc(n_particles * 3 * sizeof(double));
+    a2 = malloc(n_particles * 3 * sizeof(double));
     // for the acceleration function
-    //a3 = malloc(n * 3 * sizeof(double));
-    //a4 = malloc(n * sizeof(double));
+    //a3 = malloc(n_particles * 3 * sizeof(double));
+    //a4 = malloc(n_particles * sizeof(double));
 
     //total number of iterations is (int) (n_orbits * t / timestep)
     //we just need last orbit, so (int) (t/timestep)
@@ -281,14 +280,14 @@ void verlet_vectorize(double *mimas_positions, double min_radius, double max_rad
     double mimas_period = 2 * M_PI * sqrt(pow(dist_mimas_saturn, 3) / (G * saturn_mass));
     //int n_positions = (int)mimas_period / timestep;
     int packet_size = 100; // <== need to change this depending on what int(t/timestep) is. Right now it is 815, so 100 is good.
-    double *packet = malloc(n * packet_size * 3 * sizeof(double));
+    double *packet = malloc(n_particles * packet_size * 3 * sizeof(double));
 
     // initialise initial position of n particles.
-    old_r1 = malloc(n * 3 * sizeof(double));
-    old_v1 = malloc(n * 3 * sizeof(double));
-    for (int i = 0; i < n; i++)
+    old_r1 = malloc(n_particles * 3 * sizeof(double));
+    old_v1 = malloc(n_particles * 3 * sizeof(double));
+    for (int i = 0; i < n_particles; i++)
     {
-        double fraction = ((double)i + 1) / (n + 1);
+        double fraction = ((double)i + 1) / (n_particles + 1);
         double theta = randfrom(0, 2 * M_PI);
         //double epsilon = randfrom(-1, 1);
         //double r = randfrom(min_radius,max_radius);
@@ -317,38 +316,38 @@ void verlet_vectorize(double *mimas_positions, double min_radius, double max_rad
         int p = 0 * 3;
         //printf("%f %f %f\n",*(old_r1+p), *(old_r1+p+1), *(old_r1+p+2)); // first array
         new_r = mimas_positions + 3 * j;
-        acceleration_particle_2darray(old_a1, old_r, old_r1, a1, a2, n); // old_a1
+        acceleration_particle_2darray(old_a1, old_r, old_r1, a1, a2, n_particles); // old_a1
         //printf("i= %i/%i r=%f v=%f a=%f\n", j+1, t_end, norm(old_r1 + p), norm(old_v1 + p), norm(old_a1 + p));
 
-        scalar_mult_2darray(a1, old_v1, timestep, n); // a1
+        scalar_mult_2darray(a1, old_v1, timestep, n_particles); // a1
         //printf("i= %i/%i r=%f v=%f a=%f\n", j+1, t_end, norm(old_r1 + p), norm(old_v1 + p), norm(old_a1 + p));
-        add_2darray(a1, old_r1, a1, n); // reuse a1
+        add_2darray(a1, old_r1, a1, n_particles); // reuse a1
         //printf("i= %i/%i r=%f v=%f a=%f\n", j+1, t_end, norm(old_r1 + p), norm(old_v1 + p), norm(old_a1 + p));
-        scalar_mult_2darray(a2, old_a1, 0.5 * timestep * timestep, n); // a3
-        add_2darray(new_r1, a1, a2, n); // new_r1
+        scalar_mult_2darray(a2, old_a1, 0.5 * timestep * timestep, n_particles); // a3
+        add_2darray(new_r1, a1, a2, n_particles); // new_r1
         //new_r1 = add(add(old_r1,scalar_mult(old_v1,timestep)),scalar_mult(old_a1,0.5*pow(timestep,2)));
-        acceleration_particle_2darray(new_a1, new_r, new_r1, a1, a2, n); // new_a1
+        acceleration_particle_2darray(new_a1, new_r, new_r1, a1, a2, n_particles); // new_a1
 
-        add_2darray(a1, old_a1, new_a1, n); // reuse a1
-        scalar_mult_2darray(a1, a1, 0.5 * timestep, n); // reuse a1
-        add_2darray(new_v1, old_v1, a1, n); // new_v1
+        add_2darray(a1, old_a1, new_a1, n_particles); // reuse a1
+        scalar_mult_2darray(a1, a1, 0.5 * timestep, n_particles); // reuse a1
+        add_2darray(new_v1, old_v1, a1, n_particles); // new_v1
         //new_v1 = add(old_v1,scalar_mult(add(old_a1,new_a1),0.5*timestep));
 
         if (j >= upper_limit)
         {
             printf("i= %i/%i r=%f v=%f a=%f\n", j+1, t_end, norm(old_r1 + p), norm(old_v1 + p), norm(old_a1 + p));
             step %= packet_size;                    // step=0,1,2,...,packet_size-1,0,1,2,...
-            append_packet_2darray(packet, new_r1, step, n); // length of packet currently will be: step+1
+            append_packet_2darray(packet, new_r1, step, n_particles); // length of packet currently will be: step+1
             if (step == packet_size - 1 || j == t_end - 1)
             {
                 //append txt file with packet, step will then cycle back to zero on next loop and will reuse packet.
-                particle_text_file_append(packet, (step + 1) * n); // the n doesn't really matter, wont make sense in this case, and it's not used in text append function anyway.
+                particle_text_file_append(packet, (step + 1) * n_particles); // n_particles doesn't really matter, wont make sense in this case, and it's not used in text append function anyway.
                 // (step+1) above ^ is crucial (don't use packet_size), to get the remainder to be appended properly.
             }
             step += 1; // 1,2,3,...,packet_size
         }
-        replace(old_r1, new_r1, n);
-        replace(old_v1, new_v1, n);
+        replace(old_r1, new_r1, n_particles);
+        replace(old_v1, new_v1, n_particles);
         // replace function is crucial to avoid memory leaks, can't yse old_x1 = new_x1 since its malloc'd array pointers.
         old_r = new_r;
     }
@@ -365,7 +364,6 @@ void verlet_vectorize(double *mimas_positions, double min_radius, double max_rad
 
 void verlet_vectorize_subcycles(double min_radius, double max_radius, int n_orbits, int n_particles, double timestep, int subcycle)
 {
-    int n = n_particles;
     //double *old_r, *new_r;
     //double old_r[3], new_r[3];
     double *old_r1, *old_v1;
@@ -374,17 +372,17 @@ void verlet_vectorize_subcycles(double min_radius, double max_radius, int n_orbi
     double *a1, *a2;//, *a3, *a4;
     double *d_r1, *d_v1;
 
-    d_r1 = malloc(n * 3 * sizeof(double));
-    d_v1 = malloc(n * 3 * sizeof(double));
-    new_r1 = malloc(n * 3 * sizeof(double));
-    new_v1 = malloc(n * 3 * sizeof(double));
-    old_a1 = malloc(n * 3 * sizeof(double));
-    new_a1 = malloc(n * 3 * sizeof(double));
-    a1 = malloc(n * 3 * sizeof(double));
-    a2 = malloc(n * 3 * sizeof(double));
+    d_r1 = malloc(n_particles * 3 * sizeof(double));
+    d_v1 = malloc(n_particles * 3 * sizeof(double));
+    new_r1 = malloc(n_particles * 3 * sizeof(double));
+    new_v1 = malloc(n_particles * 3 * sizeof(double));
+    old_a1 = malloc(n_particles * 3 * sizeof(double));
+    new_a1 = malloc(n_particles * 3 * sizeof(double));
+    a1 = malloc(n_particles * 3 * sizeof(double));
+    a2 = malloc(n_particles * 3 * sizeof(double));
     // for the acceleration function
-    //a3 = malloc(n * 3 * sizeof(double));
-    //a4 = malloc(n * 3 * sizeof(double));
+    //a3 = malloc(n_particles * 3 * sizeof(double));
+    //a4 = malloc(n_particles * 3 * sizeof(double));
 
     //total number of iterations is (int) (n_orbits * t / timestep)
     //we just need last orbit, so (int) (t/timestep)
@@ -393,14 +391,14 @@ void verlet_vectorize_subcycles(double min_radius, double max_radius, int n_orbi
     double mimas_period = 2 * M_PI * sqrt(pow(dist_mimas_saturn, 3) / (G * saturn_mass));
     //int n_positions = (int)mimas_period / timestep;
     int packet_size = 100; // <== need to change this depending on what int(t/timestep) is. Right now it is 815, so 100 is good.
-    double *packet = malloc(n * packet_size * 3 * sizeof(double)); // 1 if 1d_array, 3 if 2d_array
+    double *packet = malloc(n_particles * packet_size * 3 * sizeof(double)); // 1 if 1d_array, 3 if 2d_array
 
     // initialise initial position of n particles.
-    old_r1 = malloc(n * 3 * sizeof(double));
-    old_v1 = malloc(n * 3 * sizeof(double));
-    for (int i = 0; i < n; i++)
+    old_r1 = malloc(n_particles * 3 * sizeof(double));
+    old_v1 = malloc(n_particles * 3 * sizeof(double));
+    for (int i = 0; i < n_particles; i++)
     {
-        double fraction = ((double)i + 1) / (n + 1);
+        double fraction = ((double)i + 1) / (n_particles + 1);
         double theta = randfrom(0, 2 * M_PI);
         //double epsilon = randfrom(-1, 1);
         //double r = randfrom(min_radius,max_radius);
@@ -434,18 +432,18 @@ void verlet_vectorize_subcycles(double min_radius, double max_radius, int n_orbi
         step %= packet_size;                    // step=0,1,2,...,packet_size-1,0,1,2,...
         
         /* radial vel */
-        norm_2darray(a1, old_r1, n);
-        pow_neg1_array(a1, a1, n);
-        dot_prod_2darray(a2, old_r1, old_v1, n);
-        vector_mult_2darray(a2, a2, a1, n);
+        norm_2darray(a1, old_r1, n_particles);
+        pow_neg1_array(a1, a1, n_particles);
+        dot_prod_2darray(a2, old_r1, old_v1, n_particles);
+        vector_mult_2darray(a2, a2, a1, n_particles);
 
         /* radial pos */
-        norm_2darray(a1, old_r1, n);
+        norm_2darray(a1, old_r1, n_particles);
 
         /* length of packet currently will be: step+1 */
-        //append_packet_1darray(packet, a1, step, n); // r
-        //append_packet_2darray(packet, old_r1, step, n); // x y z
-        append_packet_2_1darrays(packet, a1, a2, step, n); // r v
+        //append_packet_1darray(packet, a1, step, n_particles); // r
+        //append_packet_2darray(packet, old_r1, step, n_particles); // x y z
+        append_packet_2_1darrays(packet, a1, a2, step, n_particles); // r v
         
         int j0 = t_end/subcycle;
         printf("%i/%i ",j+1,j0);
@@ -453,22 +451,22 @@ void verlet_vectorize_subcycles(double min_radius, double max_radius, int n_orbi
         {
             //append txt file with packet, step will then cycle back to zero on next loop and will reuse packet.
             
-            /* (step+1)*n is crucial (don't use packet_size), to get the remainder to be appended properly. */
-            //arr1d_text_file_append(packet, (step + 1) * n); // r
-            //particle_text_file_append(packet, (step+1)*n); // x y z
-            two_arr1d_text_file_append(packet, (step + 1) * n); // r v
+            /* (step+1)*n_particles is crucial (don't use packet_size), to get the remainder to be appended properly. */
+            //arr1d_text_file_append(packet, (step+1)*n_particles); // r
+            //particle_text_file_append(packet, (step+1)*n_particles); // x y z
+            two_arr1d_text_file_append(packet, (step + 1) * n_particles); // r v
             printf("WRITE OUT");
         }
         else
         {
-            printf("APPENDED %i particles", n);
+            printf("APPENDED %i particles", n_particles);
         }
         step += 1; // 1,2,3,...,packet_size
         printf("\n");
         
         
-        zero_2d_array(d_r1, n);
-        zero_2d_array(d_v1, n);
+        zero_2d_array(d_r1, n_particles);
+        zero_2d_array(d_v1, n_particles);
         for (int k = 0; k < subcycle; k++)
         {
             //new_r = mimas_positions + 3 + 3 * subcycle * (j - 1) + 3 * k;
@@ -476,42 +474,42 @@ void verlet_vectorize_subcycles(double min_radius, double max_radius, int n_orbi
             new_mimas_pos_kepler(new_r, mimas_period, timestep, k + j*subcycle + 1);
 
             // SATURN ONLY
-            add_2darray(a1, old_r1, d_r1, n);
-            acceleration_saturn_2darray(old_a1, a1, a2, n); // old_a1
+            add_2darray(a1, old_r1, d_r1, n_particles);
+            acceleration_saturn_2darray(old_a1, a1, a2, n_particles); // old_a1
             
-            scalar_mult_2darray(a1, old_v1, timestep, n); // a1
-            add_2darray(a1, old_r1, a1, n); // reuse a1
-            scalar_mult_2darray(a2, old_a1, 0.5 * timestep * timestep, n); // a2
-            add_2darray(new_r1, a1, a2, n); // new_r1 (reusing old_r1)
+            scalar_mult_2darray(a1, old_v1, timestep, n_particles); // a1
+            add_2darray(a1, old_r1, a1, n_particles); // reuse a1
+            scalar_mult_2darray(a2, old_a1, 0.5 * timestep * timestep, n_particles); // a2
+            add_2darray(new_r1, a1, a2, n_particles); // new_r1 (reusing old_r1)
             
-            add_2darray(a1, new_r1, d_r1, n);
-            acceleration_saturn_2darray(new_a1, a1, a2, n); // new_a1
+            add_2darray(a1, new_r1, d_r1, n_particles);
+            acceleration_saturn_2darray(new_a1, a1, a2, n_particles); // new_a1
 
-            add_2darray(a1, old_a1, new_a1, n); // reuse a1
-            scalar_mult_2darray(a1, a1, 0.5 * timestep, n); // reuse a1
-            add_2darray(new_v1, old_v1, a1, n); // new_v1 (reusing old_v1)
+            add_2darray(a1, old_a1, new_a1, n_particles); // reuse a1
+            scalar_mult_2darray(a1, a1, 0.5 * timestep, n_particles); // reuse a1
+            add_2darray(new_v1, old_v1, a1, n_particles); // new_v1 (reusing old_v1)
 
             // PERTURBATION FROM MOON ONLY
-            add_2darray(a1, old_r1, d_r1, n);
-            acceleration_mimas_2darray(old_a1, old_r, a1, a2, n); // reuse old_a1, a4
+            add_2darray(a1, old_r1, d_r1, n_particles);
+            acceleration_mimas_2darray(old_a1, old_r, a1, a2, n_particles); // reuse old_a1, a4
             
-            scalar_mult_2darray(a1, old_a1, 0.5 * timestep * timestep, n);
-            add_2darray(d_r1,d_r1,a1, n);
+            scalar_mult_2darray(a1, old_a1, 0.5 * timestep * timestep, n_particles);
+            add_2darray(d_r1,d_r1,a1, n_particles);
             
-            add_2darray(a1, new_r1, d_r1, n);
-            acceleration_mimas_2darray(new_a1, new_r, a1, a2, n);
+            add_2darray(a1, new_r1, d_r1, n_particles);
+            acceleration_mimas_2darray(new_a1, new_r, a1, a2, n_particles);
             
-            add_2darray(a1, old_a1, new_a1, n);
-            scalar_mult_2darray(a1, a1, 0.5 * timestep, n);
-            add_2darray(d_v1,d_v1,a1,n);
+            add_2darray(a1, old_a1, new_a1, n_particles);
+            scalar_mult_2darray(a1, a1, 0.5 * timestep, n_particles);
+            add_2darray(d_v1,d_v1,a1,n_particles);
 
             //old_r = new_r;
             replace(old_r, new_r, 1);
-            replace(old_r1, new_r1, n);
-            replace(old_v1, new_v1, n);
+            replace(old_r1, new_r1, n_particles);
+            replace(old_v1, new_v1, n_particles);
         }
-        add_2darray(old_r1,new_r1,d_r1, n);
-        add_2darray(old_v1,new_v1,d_v1, n);
+        add_2darray(old_r1,new_r1,d_r1, n_particles);
+        add_2darray(old_v1,new_v1,d_v1, n_particles);
     }
     free(old_r1);
     free(old_v1);
