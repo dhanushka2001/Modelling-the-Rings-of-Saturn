@@ -58,12 +58,12 @@ void append_packet_1darray(double *packet, double *arr1d, int step, int n_partic
 void append_packet_2_1darrays(double *packet, double *arr1d_1, double *arr1d_2, int step, int n_particles);
 void scalar_mult_1darray(double *output, double *arr, double scalar, int arr_length);
 void replace(double *arr1, double *arr2, int arr_length);
-void new_mimas_pos(double *new_r, int subcycle, int t, int k);
+void new_mimas_pos(double *new_r, int n_subcycles, int t, int k);
 void new_mimas_pos_kepler(double *new_r, double mimas_period, double timestep, int k);
 void new_janus_epimetheus_pos(double *new_r_J, double *new_r_E, double *old_r_J, double *old_r_E, double *old_v_J, double *old_v_E, double *a1, double *a2, double *b1, double *b2, double *b3, double *b4, double timestep, int k);
 
-void verlet_vectorize_subcycles(double min_radius, double max_radius, int n_orbits, int n_particles, double timestep, int subcycle);
-void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_orbits, int n_particles, double timestep, int subcycle);
+void verlet_vectorize_subcycles(double min_radius, double max_radius, int n_orbits, int n_particles, double timestep, int n_subcycles);
+void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_orbits, int n_particles, double timestep, int n_subcycles);
 void acceleration_saturn_2darray(double *output, double *r_particles, double *arr1d, int arr_length);
 void acceleration_mimas_2darray(double *output, double *r_mimas, double *r_particles, double *arr1d, int arr_length);
 void acceleration_janus_2darray(double *output, double *r_janus, double *r_particles, double *arr1d, int arr_length);
@@ -78,7 +78,7 @@ int main()
     srand(time(NULL));
     //double mimas_period = 2 * M_PI * sqrt(pow(dist_mimas_saturn, 3) / (G * saturn_mass)); // correct mimas_period
     double timestep = 100;
-    int subcycle = 10000;
+    int n_subcycles = 10000;
     int n_orbits = 10000;
     int n_particles = 10000;
     double min_radius = 95400 - 1000;
@@ -86,7 +86,7 @@ int main()
 
     clock_t begin = clock();
     
-    //verlet_vectorize_subcycles_new(min_radius, max_radius, n_orbits, n_particles, timestep, subcycle);
+    //verlet_vectorize_subcycles_new(min_radius, max_radius, n_orbits, n_particles, timestep, n_subcycles);
 
     clock_t end = clock();
     double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
@@ -362,7 +362,7 @@ void verlet_vectorize(double *mimas_positions, double min_radius, double max_rad
     free(packet);
 }
 
-void verlet_vectorize_subcycles(double min_radius, double max_radius, int n_orbits, int n_particles, double timestep, int subcycle)
+void verlet_vectorize_subcycles(double min_radius, double max_radius, int n_orbits, int n_particles, double timestep, int n_subcycles)
 {
     //double *old_r, *new_r;
     //double old_r[3], new_r[3];
@@ -427,7 +427,7 @@ void verlet_vectorize_subcycles(double min_radius, double max_radius, int n_orbi
     int step = 0;
     /* the entire code above is the same as without subcycles, just initialising so far */
     
-    for (int j = 0; j < t_end/subcycle; j++)
+    for (int j = 0; j < t_end/n_subcycles; j++)
     {
         step %= packet_size; // step=0,1,2,...,packet_size-1,0,1,2,...
         
@@ -445,7 +445,7 @@ void verlet_vectorize_subcycles(double min_radius, double max_radius, int n_orbi
         //append_packet_2darray(packet, old_r1, step, n_particles); // x y z
         append_packet_2_1darrays(packet, a1, a2, step, n_particles); // r v
         
-        int j0 = t_end/subcycle;
+        int j0 = t_end/n_subcycles;
         printf("%i/%i ",j+1,j0);
         if (step == packet_size - 1 || j == j0 - 1)
         {
@@ -467,11 +467,11 @@ void verlet_vectorize_subcycles(double min_radius, double max_radius, int n_orbi
         
         zero_2d_array(d_r1, n_particles);
         zero_2d_array(d_v1, n_particles);
-        for (int k = 0; k < subcycle; k++)
+        for (int k = 0; k < n_subcycles; k++)
         {
-            //new_r = mimas_positions + 3 + 3 * subcycle * (j - 1) + 3 * k;
-            //new_mimas_pos(new_r, subcycle, t, k + j*subcycle + 1);
-            new_mimas_pos_kepler(new_r, mimas_period, timestep, k + j*subcycle + 1);
+            //new_r = mimas_positions + 3 + 3 * n_subcycles * (j - 1) + 3 * k;
+            //new_mimas_pos(new_r, n_subcycles, t, k + j*n_subcycles + 1);
+            new_mimas_pos_kepler(new_r, mimas_period, timestep, k + j*n_subcycles + 1);
 
             // SATURN ONLY
             add_2darray(a1, old_r1, d_r1, n_particles);
@@ -522,7 +522,7 @@ void verlet_vectorize_subcycles(double min_radius, double max_radius, int n_orbi
     free(packet);
 }
 
-void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_orbits, int n_particles, double timestep, int subcycle)
+void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_orbits, int n_particles, double timestep, int n_subcycles)
 {
     //double *old_r, *new_r;
     //double old_r[3], new_r[3];
@@ -598,7 +598,7 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
 
     int t_end = n_orbits * mimas_period / (timestep); // # of positions for n_orbits
     // POSITIONS FOR JANUS AND EPIMETHEUS
-    int n_positions = t_end/subcycle; // =815
+    int n_positions = t_end/n_subcycles; // =815
     double *janus_pos = malloc(n_positions * 3);
     double *epimetheus_pos = malloc(n_positions * 3);
 
@@ -608,7 +608,7 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
     int step = 0;
     /* the entire code above is the same as without subcycles, just initialising so far */
     
-    for (int j = 0; j < t_end/subcycle; j++)
+    for (int j = 0; j < t_end/n_subcycles; j++)
     {
         step = j % packet_size;                    // step=0,1,2,...,packet_size-1,0,1,2,...
         
@@ -630,7 +630,7 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
         append_packet_2darray(janus_pos, old_r_J, step, 1);
         append_packet_2darray(epimetheus_pos, old_r_E, step, 1);
         
-        int j0 = t_end/subcycle;
+        int j0 = t_end/n_subcycles;
         printf("%i/%i ",j+1,j0);
         if (step == packet_size - 1 || j == j0 - 1)
         {
@@ -656,7 +656,7 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
         
         zero_2d_array(d_r1, n_particles);
         zero_2d_array(d_v1, n_particles);
-        for (int k = 0; k < subcycle; k++)
+        for (int k = 0; k < n_subcycles; k++)
         {
             /* SATURN ONLY */
             //add_2darray(a1, old_r1, d_r1, n_particles);
@@ -677,8 +677,8 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
             /* PERTURBATION FROM MOONS ONLY */
 
             // MIMAS
-            //new_mimas_pos(new_r, subcycle, t, k + j*subcycle + 1); //USE KEPLER
-            //new_mimas_pos_kepler(new_r, mimas_period, timestep, k + j*subcycle + 1);
+            //new_mimas_pos(new_r, n_subcycles, t, k + j*n_subcycles + 1); //USE KEPLER
+            //new_mimas_pos_kepler(new_r, mimas_period, timestep, k + j*n_subcycles + 1);
 
             //acceleration_mimas_2darray(old_a1, old_r, old_r1, a2, n_particles); // reuse old_a1, a4
             
@@ -689,7 +689,7 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
             //add_2darray(d_v1, old_a1, new_a1, n_particles);
 
             /* JANUS-EPIMETHEUS */
-            new_janus_epimetheus_pos(new_r_J, new_r_E, old_r_J, old_r_E, old_v_J, old_v_E, a1, a2, b1, b2, b3, b4, timestep, k + j*subcycle + 1); // get new pos, and store new v in old.
+            new_janus_epimetheus_pos(new_r_J, new_r_E, old_r_J, old_r_E, old_v_J, old_v_E, a1, a2, b1, b2, b3, b4, timestep, k + j*n_subcycles + 1); // get new pos, and store new v in old.
             // JANUS
             acceleration_janus_2darray(old_a1, old_r_J, old_r1, a2, n_particles);
             add_2darray(d_r1, d_r1, old_a1, n_particles);
@@ -735,7 +735,7 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
     free(packet);
 }
 
-void new_mimas_pos(double *new_r, int subcycle, int t, int k)
+void new_mimas_pos(double *new_r, int n_subcycles, int t, int k)
 {
     double fraction = (double) k / t;
     new_r[0] = dist_mimas_saturn * cos(2*M_PI*(fraction));
