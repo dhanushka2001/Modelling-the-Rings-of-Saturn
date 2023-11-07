@@ -29,8 +29,7 @@
 #define epimetheus_mass 5.266e17     // km
 #define janus_mass 1.8975e18         // km
 
-// Read about what "#pragma GCC ivdep" does here: https://codeforces.com/blog/entry/96344
-
+/* Declare functions */
 double *add(double *output, double *arr1, double *arr2);
 double *subtract(double *output, double *arr1, double *arr2);
 double *scalar_mult(double *output, double *arr, double scalar);
@@ -108,6 +107,7 @@ double randfrom(double min, double max)
 
 double *add(double *output, double *arr1, double *arr2)
 {
+    // Read about what "#pragma GCC ivdep" does here: https://codeforces.com/blog/entry/96344
     #pragma GCC ivdep
     for (int i = 0; i < 3; i++)
     {
