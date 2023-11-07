@@ -29,6 +29,8 @@
 #define epimetheus_mass 5.266e17     // km
 #define janus_mass 1.8975e18         // km
 
+// Read about what "#pragma GCC ivdep" does here: https://codeforces.com/blog/entry/96344
+
 double *add(double *output, double *arr1, double *arr2);
 double *subtract(double *output, double *arr1, double *arr2);
 double *scalar_mult(double *output, double *arr, double scalar);
@@ -553,10 +555,12 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
 
     double mimas_period = 2 * M_PI * sqrt(pow(dist_mimas_saturn, 3) / (G * saturn_mass));
     //int n_positions = (int)mimas_period / timestep;
-    int packet_size = 100; // <== need to change this depending on what int(t/timestep) is. Right now it is 815, so 100 is good.
+    int packet_size = 100; // need to change this depending on what n_cycles is. Right now n_cycles=815, so 100 is good.
     double *packet = malloc(n_particles * packet_size * 3 * sizeof(double)); // 1 if 1d_array, 3 if 2d_array
+    double *janus_pos_packet = malloc(packet_size * 3);
+    double *epimetheus_pos_packet = malloc(packet_size * 3);
 
-    // initialise initial position of n particles.
+    /* Initialise initial position of n particles. */
     old_r1 = malloc(n_particles * 3 * sizeof(double));
     old_v1 = malloc(n_particles * 3 * sizeof(double));
     double r, v, fraction, theta;
@@ -598,17 +602,14 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
 
     int t_end = n_orbits * mimas_period / (timestep); // # of positions for n_orbits
     // POSITIONS FOR JANUS AND EPIMETHEUS
-    int n_positions = t_end/n_subcycles; // =815
-    double *janus_pos = malloc(n_positions * 3);
-    double *epimetheus_pos = malloc(n_positions * 3);
-
+    int n_cycles = t_end/n_subcycles; // = 815 positions
 
     // int t = mimas_period / timestep; // # of positions for 1 orbit
     //int upper_limit = (n_orbits - 1) * mimas_period / (timestep); // equal to zero if n_orbits = 1. divide by: X = # of subcycles
     int step = 0;
     /* the entire code above is the same as without subcycles, just initialising so far */
     
-    for (int j = 0; j < t_end/n_subcycles; j++)
+    for (int j = 0; j < n_cycles; j++)
     {
         step = j % packet_size;                    // step=0,1,2,...,packet_size-1,0,1,2,...
         
@@ -626,13 +627,13 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
         //append_packet_2darray(packet, old_r1, step, n_particles); // x y z
         append_packet_2_1darrays(packet, a1, a2, step, n_particles); // r v
 
-        /* append Janus and Epimetheus positions */
-        append_packet_2darray(janus_pos, old_r_J, step, 1);
-        append_packet_2darray(epimetheus_pos, old_r_E, step, 1);
+        /* append last Janus and Epimetheus position at the end of each cycle to their packets */
+        append_packet_2darray(janus_pos_packet, old_r_J, step, 1);
+        append_packet_2darray(epimetheus_pos_packet, old_r_E, step, 1);
         
-        int j0 = t_end/n_subcycles;
-        printf("%i/%i ",j+1,j0);
-        if (step == packet_size - 1 || j == j0 - 1)
+        /* Write out to text files at the end of each packet (100 cycles) or at the very end */
+        printf("%i/%i ",j+1,n_cycles);
+        if (step == packet_size - 1 || j == n_cycles - 1)
         {
             //append txt file with packet, step will then cycle back to zero on next loop and will reuse packet.
             
@@ -642,8 +643,8 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
             two_arr1d_text_file_append(packet, (step + 1) * n_particles); // r v
 
             /* write out Janus and Epimetheus positions */
-            moon1_positions_to_text_file(janus_pos, (step + 1) * 1);
-            moon2_positions_to_text_file(epimetheus_pos, (step + 1) * 1);
+            moon1_positions_to_text_file(janus_pos_packet, (step + 1) * 1);
+            moon2_positions_to_text_file(epimetheus_pos_packet, (step + 1) * 1);
             printf("WRITE OUT");
         }
         else
@@ -653,9 +654,9 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
         //step += 1; // 1,2,3,...,packet_size
         printf("\n");
         
-        
-        zero_2d_array(d_r1, n_particles);
-        zero_2d_array(d_v1, n_particles);
+        /* Start of new cycle */
+        zero_2d_array(d_r1, n_particles); // Reset d_r1
+        zero_2d_array(d_v1, n_particles); // Reset d_v1
         for (int k = 0; k < n_subcycles; k++)
         {
             /* SATURN ONLY */
@@ -677,7 +678,7 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
             /* PERTURBATION FROM MOONS ONLY */
 
             // MIMAS
-            //new_mimas_pos(new_r, n_subcycles, t, k + j*n_subcycles + 1); //USE KEPLER
+            //new_mimas_pos(new_r, n_subcycles, t, k + j*n_subcycles + 1); // USE KEPLER (ELLIPSE)
             //new_mimas_pos_kepler(new_r, mimas_period, timestep, k + j*n_subcycles + 1);
 
             //acceleration_mimas_2darray(old_a1, old_r, old_r1, a2, n_particles); // reuse old_a1, a4
@@ -733,6 +734,8 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
     free(b3);
     free(b4);
     free(packet);
+    free(janus_pos_packet);
+    free(epimetheus_pos_packet);
 }
 
 void new_mimas_pos(double *new_r, int n_subcycles, int t, int k)
@@ -821,7 +824,7 @@ void append_packet_2darray(double *packet, double *arr2d, int step, int n_partic
         for (int i = 0; i < 3; i++)
         {
             //*(packet + step * n_particles + 3 * j + i) = *(twoDarr + 3 * j + i);
-            packet[step*3*n_particles+3*j+i] = arr2d[3*j+i];
+            packet[step*3*n_particles + 3*j + i] = arr2d[3*j + i];
         }
     }
 }
@@ -831,7 +834,7 @@ void append_packet_1darray(double *packet, double *arr1d, int step, int n_partic
     #pragma GCC ivdep
     for (int j = 0; j < n_particles; j++)
     {
-        packet[step*n_particles+j] = arr1d[j];
+        packet[step*n_particles + j] = arr1d[j];
     }
 }
 
