@@ -17,3 +17,4 @@ GNU General Public License v3.0
 
 ## Section 1
 01. text
+   ![Saturn's ring gaps annotated](images/saturn4.png)
