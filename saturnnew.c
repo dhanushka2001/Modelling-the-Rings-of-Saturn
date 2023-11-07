@@ -556,7 +556,7 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
     double mimas_period = 2 * M_PI * sqrt(pow(dist_mimas_saturn, 3) / (G * saturn_mass));
     //int n_positions = (int)mimas_period / timestep;
     int packet_size = 100; // need to change this depending on what n_cycles is. Right now n_cycles=815, so 100 is good.
-    double *packet = malloc(n_particles * packet_size * 3 * sizeof(double)); // 1 if 1d_array, 3 if 2d_array
+    double *particles_packet = malloc(n_particles * packet_size * 3 * sizeof(double)); // 1 if 1d_array, 3 if 2d_array
     double *janus_pos_packet = malloc(packet_size * 3);
     double *epimetheus_pos_packet = malloc(packet_size * 3);
 
@@ -623,9 +623,9 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
         norm_2darray(a1, old_r1, n_particles);
 
         /* length of packet currently will be: step+1 */
-        //append_packet_1darray(packet, a1, step, n_particles); // r
-        //append_packet_2darray(packet, old_r1, step, n_particles); // x y z
-        append_packet_2_1darrays(packet, a1, a2, step, n_particles); // r v
+        //append_packet_1darray(particles_packet, a1, step, n_particles); // r
+        //append_packet_2darray(particles_packet, old_r1, step, n_particles); // x y z
+        append_packet_2_1darrays(particles_packet, a1, a2, step, n_particles); // r v
 
         /* append last Janus and Epimetheus position at the end of each cycle to their packets */
         append_packet_2darray(janus_pos_packet, old_r_J, step, 1);
@@ -638,9 +638,9 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
             //append txt file with packet, step will then cycle back to zero on next loop and will reuse packet.
             
             /* (step+1)*n is crucial (don't use packet_size), to get the remainder to be appended properly. */
-            //arr1d_text_file_append(packet, (step + 1) * n); // r
-            //particle_text_file_append(packet, (step+1)*n); // x y z
-            two_arr1d_text_file_append(packet, (step + 1) * n_particles); // r v
+            //arr1d_text_file_append(particles_packet, (step + 1) * n); // r
+            //particle_text_file_append(particles_packet, (step+1)*n); // x y z
+            two_arr1d_text_file_append(particles_packet, (step + 1) * n_particles); // r v
 
             /* write out Janus and Epimetheus positions */
             moon1_positions_to_text_file(janus_pos_packet, (step + 1) * 1);
@@ -733,7 +733,7 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
     free(b2);
     free(b3);
     free(b4);
-    free(packet);
+    free(particles_packet);
     free(janus_pos_packet);
     free(epimetheus_pos_packet);
 }
