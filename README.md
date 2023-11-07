@@ -12,5 +12,8 @@ This was my Final Year Project at the University of Warwick in 2022, for which w
 
 Degree: BSc Mathematics and Physics
 
+## License
+GNU General Public License v3.0
+
 ## Section 1
 01. text
