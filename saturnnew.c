@@ -77,13 +77,12 @@ void zero_2d_array(double *output, int arr_length);
 int main()
 {
     srand(time(NULL));
-    //double mimas_period = 2 * M_PI * sqrt(pow(dist_mimas_saturn, 3) / (G * saturn_mass)); // correct mimas_period
-    double timestep = 100;
-    int n_subcycles = 10000;
-    int n_orbits = 10000;
-    int n_particles = 10000;
-    double min_radius = 95400 - 1000;
-    double max_radius = 95400 + 1000;
+    //double timestep = 100;
+    //int n_subcycles = 10000;
+    //int n_orbits = 10000;
+    //int n_particles = 10000;
+    //double min_radius = 95400 - 1000;
+    //double max_radius = 95400 + 1000;
 
     clock_t begin = clock();
     
@@ -553,7 +552,7 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
     //we just need last orbit, so (int) (t/timestep)
     //so packet size should be a fraction of that, maybe 1/10 or 1/100.
 
-    double mimas_period = 2 * M_PI * sqrt(pow(dist_mimas_saturn, 3) / (G * saturn_mass));
+    double mimas_period = 2 * M_PI * sqrt(pow(dist_mimas_saturn, 3) / (G * saturn_mass)); // correct mimas_period
     //int n_positions = (int)mimas_period / timestep;
     int packet_size = 100; // need to change this depending on what n_cycles is. Right now n_cycles=815, so 100 is good.
     double *particles_packet = malloc(n_particles * packet_size * 3 * sizeof(double)); // 1 if 1d_array, 3 if 2d_array
@@ -620,7 +619,7 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
         vector_mult_2darray(a2, a2, a1, n_particles);
 
         /* radial pos */
-        norm_2darray(a1, old_r1, n_particles);
+        norm_2darray(a1, old_r1, n_particles); // is it better to use less variables or less function calls? (memory vs compute)
 
         /* length of packet currently will be: step+1 */
         //append_packet_1darray(particles_packet, a1, step, n_particles); // r
