@@ -1,33 +1,38 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
+#include <math.h>                           // https://www.tutorialspoint.com/c_standard_library/math_h.htm
 #include <time.h>
+
+/* Guide on C commenting etiquette */
+// https://users.cs.utah.edu/~germain/PPS/Topics/commenting.html
+// https://www.doc.ic.ac.uk/lab/cplus/cstyle.html
+// https://improvingsoftware.com/2011/06/27/5-best-practices-for-commenting-your-code/
 
 #ifndef M_PI
 #    define M_PI 3.14159265358979323846
 #endif
-#define G 6.67E-20                     // big G with km instead of m
-#define saturn_equatorial_radius 60268 // km
-#define saturn_polar_radius 60268      // km 54364
-#define saturn_mass 5.683e26           // kg
+#define G 6.67E-20                          // big G with km instead of m
+#define saturn_equatorial_radius 60268      // km
+#define saturn_polar_radius 60268           // km 54364
+#define saturn_mass 5.683e26                // kg
 
-#define mimas_radius 198            // km
-#define mimas_mass 3.75E19          // kg (should be e19)
-#define dist_mimas_saturn 185539    // km
-#define mimas_periapsis 181902      // km
-#define mimas_apoapsis 189176       // km
+#define mimas_radius 198                    // km
+#define mimas_mass 3.75E19                  // kg (should be e19)
+#define dist_mimas_saturn 185539            // km
+#define mimas_periapsis 181902              // km
+#define mimas_apoapsis 189176               // km
 #define mimas_ecc 0.0196
 
-#define titan_radius 2575  // km
-#define titan_mass 1.35E23 // kg
-// titan_period = 16 * 24 * 60 * 60  // seconds
-#define dist_titan_saturn 1221870   // km
+#define titan_radius 2575                   // km
+#define titan_mass 1.35E23                  // kg
+// titan_period = 16 * 24 * 60 * 60         // seconds
+#define dist_titan_saturn 1221870           // km
 
-#define huygens_gap_radius 117680   // km
-#define huygens_gap_width 350       // km
+#define huygens_gap_radius 117680           // km
+#define huygens_gap_width 350               // km
 
-#define epimetheus_mass 5.266e17     // km
-#define janus_mass 1.8975e18         // km
+#define epimetheus_mass 5.266e17            // km
+#define janus_mass 1.8975e18                // km
 
 /* Declare functions */
 double *add(double *output, double *arr1, double *arr2);
