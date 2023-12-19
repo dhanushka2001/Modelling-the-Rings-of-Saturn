@@ -38,7 +38,6 @@
 double *add(double *output, double *arr1, double *arr2);
 double *subtract(double *output, double *arr1, double *arr2);
 double *scalar_mult(double *output, double *arr, double scalar);
-double min(double a, double b);
 double norm(double *r);
 double randfrom(double min, double max);
 void moon1_positions_to_text_file(double *positions, int twoD_arr_length);
@@ -82,16 +81,18 @@ void zero_2d_array(double *output, int arr_length);
 int main()
 {
     srand(time(NULL));
-    //double timestep = 100;
-    //int n_subcycles = 10000;
-    //int n_orbits = 10000;
-    //int n_particles = 10000;
-    //double min_radius = 95400 - 1000;
-    //double max_radius = 95400 + 1000;
+    // double timestep = 100;
+    // int n_subcycles = 10000;
+    // int n_orbits = 10000;
+    // int n_particles = 10000;
+    // double min_radius = 95400 - 1000;
+    // double max_radius = 95400 + 1000;
 
     clock_t begin = clock();
+    double a = fmin((double) 11/3, M_PI);
+    printf("a=%0.15f\n", a);
     
-    //verlet_vectorize_subcycles_new(min_radius, max_radius, n_orbits, n_particles, timestep, n_subcycles);
+    // verlet_vectorize_subcycles_new(min_radius, max_radius, n_orbits, n_particles, timestep, n_subcycles);
 
     clock_t end = clock();
     double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
@@ -136,11 +137,6 @@ double *scalar_mult(double *output, double *arr, double scalar)
         output[i] = arr[i] * scalar;
     }
     return output;
-}
-
-double min(double a, double b)
-{
-    return (a < b) * a + (!(a < b) * b);
 }
 
 double norm(double *r)
