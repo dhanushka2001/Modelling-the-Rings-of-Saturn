@@ -18,7 +18,7 @@
 
 #define mimas_radius 198                    // km
 #define mimas_mass 3.75E19                  // kg (should be e19)
-#define dist_mimas_saturn 185539            // km
+#define mimas_semi_major_axis 185539        // km
 #define mimas_periapsis 181902              // km
 #define mimas_apoapsis 189176               // km
 #define mimas_ecc 0.0196
@@ -65,6 +65,7 @@ void scalar_mult_1darray(double *output, double *arr, double scalar, int arr_len
 void replace(double *arr1, double *arr2, int arr_length);
 void new_mimas_pos(double *new_r, int n_subcycles, int t, int k);
 void new_mimas_pos_kepler(double *new_r, double mimas_period, double timestep, int k);
+void new_mimas_pos_kepler_parametric(double *new_r, double mimas_period, double timestep, int k);
 void new_janus_epimetheus_pos(double *new_r_J, double *new_r_E, double *old_r_J, double *old_r_E, double *old_v_J, double *old_v_E, double *a1, double *a2, double *b1, double *b2, double *b3, double *b4, double timestep, int k);
 
 void verlet_vectorize_subcycles(double min_radius, double max_radius, int n_orbits, int n_particles, double timestep, int n_subcycles);
@@ -279,7 +280,7 @@ void verlet_vectorize(double *mimas_positions, double min_radius, double max_rad
     // we just need last orbit, so (int) (t/timestep)
     // so packet size should be a fraction of that, maybe 1/10 or 1/100.
 
-    double mimas_period = 2 * M_PI * sqrt(pow(dist_mimas_saturn, 3) / (G * saturn_mass));
+    double mimas_period = 2 * M_PI * sqrt(pow(mimas_semi_major_axis, 3) / (G * saturn_mass));
     //int n_positions = (int)mimas_period / timestep;
     int packet_size = 100; // <== need to change this depending on what int(t/timestep) is. Right now it is 815, so 100 is good.
     double *packet = malloc(n_particles * packet_size * 3 * sizeof(double));
@@ -297,8 +298,8 @@ void verlet_vectorize(double *mimas_positions, double min_radius, double max_rad
         old_r1[3*i] = r * cos(theta);
         old_r1[3*i + 1] = r * sin(theta);
         old_r1[3*i + 2] = 0;
-        fraction = r / dist_mimas_saturn;
-        double v = 2 * M_PI * dist_mimas_saturn / (mimas_period * sqrt(fraction));
+        fraction = r / mimas_semi_major_axis;
+        double v = 2 * M_PI * mimas_semi_major_axis / (mimas_period * sqrt(fraction));
         old_v1[3*i] = -1 * v * sin(theta);
         old_v1[3*i + 1] = v * cos(theta);
         old_v1[3*i + 2] = 0;
@@ -390,7 +391,7 @@ void verlet_vectorize_subcycles(double min_radius, double max_radius, int n_orbi
     //we just need last orbit, so (int) (t/timestep)
     //so packet size should be a fraction of that, maybe 1/10 or 1/100.
 
-    double mimas_period = 2 * M_PI * sqrt(pow(dist_mimas_saturn, 3) / (G * saturn_mass));
+    double mimas_period = 2 * M_PI * sqrt(pow(mimas_semi_major_axis, 3) / (G * saturn_mass));
     //int n_positions = (int)mimas_period / timestep;
     int packet_size = 100; // <== need to change this depending on what int(t/timestep) is. Right now it is 815, so 100 is good.
     double *packet = malloc(n_particles * packet_size * 3 * sizeof(double)); // 1 if 1d_array, 3 if 2d_array
@@ -408,8 +409,8 @@ void verlet_vectorize_subcycles(double min_radius, double max_radius, int n_orbi
         old_r1[3*i] = r * cos(theta);
         old_r1[3*i + 1] = r * sin(theta);
         old_r1[3*i + 2] = 0;
-        fraction = r / dist_mimas_saturn;
-        double v = 2 * M_PI * dist_mimas_saturn / (mimas_period * sqrt(fraction));
+        fraction = r / mimas_semi_major_axis;
+        double v = 2 * M_PI * mimas_semi_major_axis / (mimas_period * sqrt(fraction));
         old_v1[3*i] = -1 * v * sin(theta);
         old_v1[3*i + 1] = v * cos(theta);
         old_v1[3*i + 2] = 0;
@@ -419,7 +420,7 @@ void verlet_vectorize_subcycles(double min_radius, double max_radius, int n_orbi
     // loop in time
     // remember to just save the last orbit, j > n = (n_orbits - 1)*mimas_period/timestep
 
-    //double old_r[3] = {dist_mimas_saturn, 0, 0};  // circular
+    //double old_r[3] = {mimas_semi_major_axis, 0, 0};  // circular
     double old_r[3] = {mimas_periapsis, 0, 0};    // elliptic
     double new_r[3];
 
@@ -553,7 +554,7 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
     //we just need last orbit, so (int) (t/timestep)
     //so packet size should be a fraction of that, maybe 1/10 or 1/100.
 
-    double mimas_period = 2 * M_PI * sqrt(pow(dist_mimas_saturn, 3) / (G * saturn_mass)); // correct mimas_period
+    double mimas_period = 2 * M_PI * sqrt(pow(mimas_semi_major_axis, 3) / (G * saturn_mass)); // correct mimas_period
     //int n_positions = (int)mimas_period / timestep;
     int packet_size = 100; // need to change this depending on what n_cycles is. Right now n_cycles=815, so 100 is good.
     double *particles_packet = malloc(n_particles * packet_size * 3 * sizeof(double)); // 1 if 1d_array, 3 if 2d_array
@@ -573,8 +574,8 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
         old_r1[3 * i] = r * cos(theta);
         old_r1[3 * i + 1] = r * sin(theta);
         old_r1[3 * i + 2] = 0;
-        fraction = r / dist_mimas_saturn;
-        v = 2 * M_PI * dist_mimas_saturn / (mimas_period * sqrt(fraction));
+        fraction = r / mimas_semi_major_axis;
+        v = 2 * M_PI * mimas_semi_major_axis / (mimas_period * sqrt(fraction));
         old_v1[3 * i] = -1 * v * sin(theta);
         old_v1[3 * i + 1] = v * cos(theta);
         old_v1[3 * i + 2] = 0;
@@ -584,7 +585,7 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
     // loop in time
     // remember to just save the last orbit, j > n = (n_orbits - 1)*mimas_period/timestep
 
-    //double old_r[3] = {dist_mimas_saturn, 0, 0};  // circular
+    //double old_r[3] = {mimas_semi_major_axis, 0, 0};  // circular
     double old_r[3] = {mimas_periapsis, 0, 0};    // elliptic
     double new_r[3];
 
@@ -741,8 +742,8 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
 void new_mimas_pos(double *new_r, int n_subcycles, int t, int k)
 {
     double fraction = (double) k / t;
-    new_r[0] = dist_mimas_saturn * cos(2*M_PI*(fraction));
-    new_r[1] = dist_mimas_saturn * sin(2*M_PI*(fraction));
+    new_r[0] = mimas_semi_major_axis * cos(2*M_PI*(fraction));
+    new_r[1] = mimas_semi_major_axis * sin(2*M_PI*(fraction));
     new_r[2] = 0;
 }
 
@@ -758,8 +759,19 @@ void new_mimas_pos_kepler(double *new_r, double mimas_period, double timestep, i
         E -= (E - mimas_ecc * sin(E) - M) / (1 - mimas_ecc * cos(E));
     }
 
-    new_r[0] = dist_mimas_saturn * (cos(E) - mimas_ecc);
-    new_r[1] = dist_mimas_saturn * sqrt(1 - mimas_ecc*mimas_ecc) * sin(E);
+    new_r[0] = mimas_semi_major_axis * (cos(E) - mimas_ecc);
+    new_r[1] = mimas_semi_major_axis * sqrt(1 - mimas_ecc*mimas_ecc) * sin(E);
+    new_r[2] = 0;
+}
+
+void new_mimas_pos_kepler_parametric(double *new_r, double mimas_period, double timestep, int k)
+{
+    double a = mimas_semi_major_axis;
+    double b = a * sqrt(1 - mimas_ecc*mimas_ecc);
+    double c = mimas_periapsis - a;
+    double fraction = k*timestep/mimas_period;
+    new_r[0] = a * cos(2*M_PI*fraction) + c;
+    new_r[1] = b * sin(2*M_PI*fraction);
     new_r[2] = 0;
 }
 
