@@ -162,7 +162,7 @@ void append(double *twoD_arr, double *arr, int n_orbits)
 
 void moon_positions_to_text_file(double *positions, int twoD_arr_length)
 {
-    FILE *f = fopen("E:/Warwick/saturn/mimas_x_y_dt=100_sub=10000.txt", "a");
+    FILE *f = fopen("E:/Warwick/saturn/mimas_x_y_z_dt=100_sub=10000.txt", "a");
     if (f == NULL)
     {
         printf("Error opening file!\n");
@@ -171,7 +171,7 @@ void moon_positions_to_text_file(double *positions, int twoD_arr_length)
 
     for (int i = 0; i < twoD_arr_length; i++)
     {
-        for (int j = 0; j < 2; j++)
+        for (int j = 0; j < 3; j++)
         {
             fprintf(f, "%0.15f ", *(2 * i + positions + j));
         }
@@ -554,12 +554,12 @@ void verlet_vectorize_subcycles(double min_radius, double max_radius, int n_orbi
 
 void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_orbits, int n_particles, double timestep, int n_subcycles)
 {
-    double *old_r, *new_r;
+    // double old_r[3], new_r[3];
     double *old_r1, *old_v1;
     double *old_a1, *new_a1;
     double *new_r1, *new_v1;
     double *a1, *a2;//, *a3, *a4;
-    double *b1, *b2, *b3, *b4;
+    // double *b1, *b2, *b3, *b4;
     double *d_r1, *d_v1;
     // double *old_r_J, *new_r_J;
     // double *old_r_E, *new_r_E;
@@ -587,9 +587,9 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
     //int n_positions = (int)mimas_period / timestep;
     int packet_size = 100; // need to change this depending on what n_cycles is. Right now n_cycles=815, so 100 is good.
     double *particles_packet = malloc(n_particles * packet_size * 3 * sizeof(double)); // 1 if 1d_array, 3 if 2d_array
-    // double *janus_pos_packet = malloc(packet_size * 3); // x y z
-    // double *epimetheus_pos_packet = malloc(packet_size * 3); // x y z
-    double *mimas_pos_packet = malloc(packet_size * 3); // x y z
+    // double *janus_pos_packet = malloc(packet_size * 3 * sizeof(double)); // x y z
+    // double *epimetheus_pos_packet = malloc(packet_size * 3 * sizeof(double)); // x y z
+    double *mimas_pos_packet = malloc(packet_size * 3 * sizeof(double)); // x y z
 
     /* Initialise initial position of n particles. */
     old_r1 = malloc(n_particles * 3 * sizeof(double));
@@ -617,16 +617,16 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
 
     /* Mimas */
     //double old_r[3] = {mimas_semi_major_axis, 0, 0};  // circular
-    // old_r[3] = {mimas_periapsis, 0, 0};    // elliptic
-    // double new_r[3];
+    double old_r[3] = {mimas_periapsis, 0, 0};    // elliptic
+    double new_r[3];
 
-    old_r[0] = mimas_periapsis;
-    old_r[1] = 0;
-    old_r[2] = 0; // equivalent to *(old_r + 2) https://stackoverflow.com/a/11625225/7875204
+    // old_r[0] = mimas_periapsis;
+    // old_r[1] = 0;
+    // old_r[2] = 0; // equivalent to *(old_r + 2) https://stackoverflow.com/a/11625225/7875204
 
     /* Janus */
     // double old_r_J[3] = {151460, 0, 0};
-    v = sqrt(G * saturn_mass / 151460);
+    // v = sqrt(G * saturn_mass / 151460);
     // double old_v_J[3] = {0, v, 0};
     // double new_r_J[3];
     
@@ -640,7 +640,7 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
 
     /* Epimetheus */
     // double old_r_E[3] = {-151410, 0, 0};
-    v = sqrt(G * saturn_mass / 151410);
+    // v = sqrt(G * saturn_mass / 151410);
     // double old_v_E[3] = {0, -v, 0};
     // double new_r_E[3];
     
@@ -681,9 +681,9 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
         append_packet_2_1darrays(particles_packet, a1, a2, step, n_particles); // r v
 
         /* append last Janus and Epimetheus position at the end of each cycle to their packets */
-        // append_packet_2darray(janus_pos_packet, old_r_J, step, 1);
-        // append_packet_2darray(epimetheus_pos_packet, old_r_E, step, 1);
-        append_packet_2darray(mimas_pos_packet, old_r, step, 1);
+        // append_packet_1darray(janus_pos_packet, old_r_J, step, 3);
+        // append_packet_1darray(epimetheus_pos_packet, old_r_E, step, 3);
+        append_packet_1darray(mimas_pos_packet, old_r, step, 3);
         
         /* WRITE OUT to text files at the end of each packet (100 cycles) or at the very end */
         printf("%i/%i ", j+1, n_cycles);
@@ -740,13 +740,15 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
             // new_mimas_pos_kepler(new_r, mimas_period, timestep, k + j*n_subcycles + 1); // USE PARAMETRIC
             new_mimas_pos_kepler_parametric(new_r, mimas_period, timestep, k + j*n_subcycles + 1);
 
-            acceleration_mimas_2darray(old_a1, old_r, old_r1, a2, n_particles); // reuse old_a1, a4
+            acceleration_mimas_2darray(old_a1, old_r, old_r1, a2, n_particles); // reuse old_a1
             
             add_2darray(d_r1, d_r1, old_a1, n_particles);
             
             acceleration_mimas_2darray(new_a1, new_r, new_r1, a2, n_particles);
             
-            add_2darray(d_v1, old_a1, new_a1, n_particles);
+            // add_2darray(d_v1, old_a1, new_a1, n_particles);
+            add_2darray(d_v1, d_v1, old_a1, n_particles);
+            add_2darray(d_v1, d_v1, new_a1, n_particles);
 
             /* JANUS-EPIMETHEUS */
             // new_janus_epimetheus_pos(new_r_J, new_r_E, old_r_J, old_r_E, old_v_J, old_v_E, a1, a2, b1, b2, b3, b4, timestep, k + j*n_subcycles + 1); // get new pos, and store new v in old.
@@ -770,17 +772,17 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
 
 
             // replace function is crucial to avoid memory leaks, can't use old_x1 = new_x1 since its malloc'd array pointers.
-            // replace(old_r, new_r, 1);       // Mimas
+            replace(old_r, new_r, 1);       // Mimas
             // replace(old_r_J, new_r_J, 1);   // Janus
             // replace(old_r_E, new_r_E, 1);   // Epimetheus
-            // replace(old_r1, new_r1, n_particles);
-            // replace(old_v1, new_v1, n_particles);
+            replace(old_r1, new_r1, n_particles);
+            replace(old_v1, new_v1, n_particles);
 
-            old_r = new_r;
+            // old_r = new_r;
             // old_r_J = new_r_J;
             // old_r_E = new_r_E;
-            old_r1 = new_r1;
-            old_v1 = new_v1;
+            // old_r1 = new_r1;
+            // old_v1 = new_v1;
         }
         scalar_mult_2darray(d_r1, d_r1, 0.5 * timestep * timestep, n_particles);
         scalar_mult_2darray(d_v1, d_v1, 0.5 * timestep, n_particles);
@@ -788,10 +790,10 @@ void verlet_vectorize_subcycles_new(double min_radius, double max_radius, int n_
         add_2darray(old_r1,new_r1,d_r1, n_particles);
         add_2darray(old_v1,new_v1,d_v1, n_particles);
     }
-    free(old_r1);
-    free(old_v1);
-    free(old_a1);
-    free(new_a1);
+    free(old_r1), free(new_r1);
+    free(old_v1), free(new_v1);
+    free(old_a1), free(new_a1);
+    free(d_r1), free(d_v1);
     free(a1);
     free(a2);
     // free(b1);
