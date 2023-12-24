@@ -8,7 +8,7 @@ Dhanushka Jayagoda - <dhanushka2001@gmail.com>
 ### Affiliation
 ![Warwick University logo](images/Shield_of_the_University_of_Warwick-small.png)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![Warwick University logo](images/WarwickLogo-small.png)   
 
-This was my Final Year Project at the University of Warwick in 2022, which was graded >70%.
+This was my Final Year Project at the University of Warwick in 2022, which was given a Grade 1.
 
 Degree: BSc Mathematics and Physics
 
