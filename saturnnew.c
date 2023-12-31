@@ -87,12 +87,12 @@ int main()
 {
     srand(time(NULL));
     double timestep = 100;      // dt=1000 produces bad results
-    int n_subcycles = 500;
+    int n_subcycles = 2000;
     int n_orbits = 8000;       // t = (n_orb * mimas_period) / (dt * n_sub) = 1/100
     int n_particles = 10000;
     //double y1 = mimas_semi_major_axis * pow(1/2,2/3);
-    double min_radius = 116382; //115500; // 95400 - 1000;
-    double max_radius = 117382; //118000; // 95400 + 1000;
+    double min_radius = 115500; //116382; // // 95400 - 1000;
+    double max_radius = 118000; //117382; //118000; // // 95400 + 1000;
 
     clock_t begin = clock();
     //double a = fmin((double) 11/3, M_PI);
@@ -268,7 +268,7 @@ void arr1d_text_file_append(double *arr, int arr_length)
 void two_arr1d_text_file_append(double *arr, int arr_length)
 {
     // "E:/Warwick/saturn/positions_particles_janus_epimetheus_massx1_95400km_dt=100_n_orb=10000_sub=10000.txt"
-    FILE *f = fopen("E:/Warwick/saturn/positions_particles_huygens_mimas_massx1_116382-117382km_dt=100_n_orb=8000_sub=500_ellipse_parametric.txt", "a");
+    FILE *f = fopen("E:/Warwick/saturn/positions_particles_huygens_mimas_massx1_116382-117382km_dt=100_n_orb=8000_sub=2000_ellipse_parametric_v3.txt", "a");
     if (f == NULL)
     {
         printf("Error opening file!\n");
@@ -458,8 +458,8 @@ void verlet_vectorize_subcycles(double min_radius, double max_radius, int n_orbi
 
     /* Mimas */
     //double old_r[3] = {mimas_semi_major_axis, 0, 0};  // circular
-    double old_r[3] = {mimas_periapsis, 0, 0};    // elliptic
-    double new_r[3];
+    double old_r_M[3] = {mimas_periapsis, 0, 0};    // elliptic
+    double new_r_M[3];
 
     // old_r[0] = mimas_periapsis;
     // old_r[1] = 0;
@@ -577,10 +577,10 @@ void verlet_vectorize_subcycles(double min_radius, double max_radius, int n_orbi
             /* MIMAS */
             // new_mimas_pos(new_r, n_subcycles, t, k + j*n_subcycles + 1); // USE KEPLER (ELLIPSE)
             // new_mimas_pos_kepler(new_r, mimas_period, timestep, k + j*n_subcycles + 1); // USE PARAMETRIC
-            new_mimas_pos_kepler_parametric(new_r, mimas_period, timestep, k + j*n_subcycles + 1);
-            acceleration_mimas_2darray(old_a1, old_r, old_r1, a2, n_particles); // reuse old_a1
+            new_mimas_pos_kepler_parametric(new_r_M, mimas_period, timestep, k + j*n_subcycles + 1);
+            acceleration_mimas_2darray(old_a1, old_r_M, old_r1, a2, n_particles);
             add_2darray(d_r1, d_r1, old_a1, n_particles);
-            acceleration_mimas_2darray(new_a1, new_r, new_r1, a2, n_particles);
+            acceleration_mimas_2darray(new_a1, new_r_M, new_r1, a2, n_particles);
             add_2darray(d_v1, d_v1, old_a1, n_particles);
             add_2darray(d_v1, d_v1, new_a1, n_particles);
 
@@ -602,7 +602,7 @@ void verlet_vectorize_subcycles(double min_radius, double max_radius, int n_orbi
             /**********************************************************************************************************/
 
             // replace function is crucial to avoid memory leaks, can't use old_x1 = new_x1 since its malloc'd array pointers.
-            replace(old_r, new_r, 1);       // Mimas
+            replace(old_r_M, new_r_M, 1);       // Mimas
             // replace(old_r_J, new_r_J, 1);   // Janus
             // replace(old_r_E, new_r_E, 1);   // Epimetheus
             replace(old_r1, new_r1, n_particles);
@@ -636,16 +636,18 @@ void verlet_vectorize_subcycles(double min_radius, double max_radius, int n_orbi
     // free(mimas_pos_packet);
 }
 
-void new_mimas_pos(double *new_r, int n_subcycles, int t, int k)
+void new_mimas_pos(double *new_r_M, int n_subcycles, int t, int k)
 {
+    // CIRCLE
     double fraction = (double) k / t;
-    new_r[0] = mimas_semi_major_axis * cos(2*M_PI*(fraction));
-    new_r[1] = mimas_semi_major_axis * sin(2*M_PI*(fraction));
-    new_r[2] = 0;
+    new_r_M[0] = mimas_semi_major_axis * cos(2*M_PI*(fraction));
+    new_r_M[1] = mimas_semi_major_axis * sin(2*M_PI*(fraction));
+    new_r_M[2] = 0;
 }
 
-void new_mimas_pos_kepler(double *new_r, double mimas_period, double timestep, int k)
+void new_mimas_pos_kepler(double *new_r_M, double mimas_period, double timestep, int k)
 {
+    // ELLIPSE
     double n = 2 * M_PI / mimas_period; // mean motion
     double M = n * k * timestep;        // mean anomaly
 
@@ -656,20 +658,21 @@ void new_mimas_pos_kepler(double *new_r, double mimas_period, double timestep, i
         E -= (E - mimas_ecc * sin(E) - M) / (1 - mimas_ecc * cos(E));
     }
 
-    new_r[0] = mimas_semi_major_axis * (cos(E) - mimas_ecc);
-    new_r[1] = mimas_semi_major_axis * sqrt(1 - mimas_ecc*mimas_ecc) * sin(E);
-    new_r[2] = 0;
+    new_r_M[0] = mimas_semi_major_axis * (cos(E) - mimas_ecc);
+    new_r_M[1] = mimas_semi_major_axis * sqrt(1 - mimas_ecc*mimas_ecc) * sin(E);
+    new_r_M[2] = 0;
 }
 
-void new_mimas_pos_kepler_parametric(double *new_r, double mimas_period, double timestep, int k)
+void new_mimas_pos_kepler_parametric(double *new_r_M, double mimas_period, double timestep, int k)
 {
+    // ELLIPSE USING PARAMETRIC EQUATIONS RATHER THAN ITERATING
     double a = mimas_semi_major_axis;
     double b = a * sqrt(1 - mimas_ecc*mimas_ecc);
     double c = mimas_periapsis - a;
     double fraction = k*timestep/mimas_period;
-    new_r[0] = a * cos(2*M_PI*fraction) + c;
-    new_r[1] = b * sin(2*M_PI*fraction);
-    new_r[2] = 0;
+    new_r_M[0] = a * cos(2*M_PI*fraction) + c;
+    new_r_M[1] = b * sin(2*M_PI*fraction);
+    new_r_M[2] = 0;
 }
 
 void new_janus_epimetheus_pos(double *new_r_J, double *new_r_E, double *old_r_J, double *old_r_E, double *old_v_J, double *old_v_E, double *a1, double *a2, double *b1, double *b2, double *b3, double *b4, double timestep, int k)
