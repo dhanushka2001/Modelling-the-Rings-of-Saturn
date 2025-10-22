@@ -1,6 +1,6 @@
 # Modelling the Rings of Saturn
 
-This was my Final Year Project at the University of Warwick in 2022, which was given a First-class.
+This was my Final Year Project at the University of Warwick in 2022, which was given a [First-class](https://drive.google.com/file/d/1U0OKGjXay2MrkH1fxmdhtpEDRbPdHB9t/view?usp=sharing).
 
 Degree: BSc Mathematics and Physics
 
@@ -304,8 +304,8 @@ In order to model the wake trails left by embedded moons, interparticle collisio
 
 _Figure 6: Magnitude of the accumulated accelerations from each moon at varying distances from Saturn. (Dhanushka Jayagoda, 2022)_
 
-<img width="503" alt="resonance_strengths_dt=1000_k=10000" src="https://github.com/user-attachments/assets/f16b2893-41ac-4cdc-b366-8eb766370958" />
-<img width="503" alt="resonance_strengths_dt=1000_k=100000" src="https://github.com/user-attachments/assets/8194fc75-fa97-4ea2-a1ad-6dbb4b39aa3b" />
+<img width="410" alt="resonance_strengths_dt=1000_k=10000" src="https://github.com/user-attachments/assets/f16b2893-41ac-4cdc-b366-8eb766370958" />
+<img width="410" alt="resonance_strengths_dt=1000_k=100000" src="https://github.com/user-attachments/assets/8194fc75-fa97-4ea2-a1ad-6dbb4b39aa3b" />
 
 _Figure 7: Magnitude of the accumulated accelerations, with all the moons' perturbations combined, at varying distances from Saturn. Total simulation time: $`\sim0.32 ~yrs`$ (left) and $`\sim3.17 ~yrs`$ (right). (Dhanushka Jayagoda, 2022)_
 
@@ -313,8 +313,8 @@ In order to measure the strengths of the Lindblad resonances from each other moo
 
 ### B. Huygens gap
 
-<img width="503" alt="saturnringdensity6graph2" src="https://github.com/user-attachments/assets/c465363a-a891-444b-ab42-e94fc4c7e84b" />
-<img width="503" alt="saturnringdensity6graph2_ellipse" src="https://github.com/user-attachments/assets/f1efdab3-6ee2-4e50-9537-c132116e3423" />
+<img width="410" alt="saturnringdensity6graph2" src="https://github.com/user-attachments/assets/c465363a-a891-444b-ab42-e94fc4c7e84b" />
+<img width="410" alt="saturnringdensity6graph2_ellipse" src="https://github.com/user-attachments/assets/f1efdab3-6ee2-4e50-9537-c132116e3423" />
 
 _Figure 8: Ring particle density over time. $`10,000`$ particles initially between $`115,500~km`$ and $`118,000~km`$, with just Mimas and Saturn. Mimas' orbit modelled as a circle (left) and an ellipse (right). Total simulation time: $`\sim25.8~yrs`$. (Dhanushka Jayagoda, 2022)_
 
@@ -326,8 +326,8 @@ $\Delta r_r \simeq \frac{J_2}{2}\left(\frac{m+\epsilon}{m-\epsilon}\right)\frac{
 
 where $`J_2`$ is the primary's zonal harmonic and $`R_p`$ is the equatorial radius of the oblate planet. Both the circular and elliptic plots appear to show density waves initially, at around $`116,000~km`$, and start to drift away from the resonance site as predicted by theory.[^Paper_9]
 
-[<img width="503" alt="image" src="https://github.com/user-attachments/assets/44ce3c68-68ff-40de-9e01-9bce62cadac0" />](https://ciclops.org/view/2127/The-Huygens-Gap.html)
-[<img width="503" alt="image" src="https://github.com/user-attachments/assets/6277d0cf-1afc-4e38-b300-f2981c77d512" />](https://ciclops.org/view/3858/Expanse-of-Ice.html)
+[<img width="410" alt="image" src="https://github.com/user-attachments/assets/44ce3c68-68ff-40de-9e01-9bce62cadac0" />](https://ciclops.org/view/2127/The-Huygens-Gap.html)
+[<img width="410" alt="image" src="https://github.com/user-attachments/assets/6277d0cf-1afc-4e38-b300-f2981c77d512" />](https://ciclops.org/view/3858/Expanse-of-Ice.html)
 _Figure 9: Image of the Huygens gap taken by Cassini in 2006 (left), annotated image of the Cassini division with the Huygens gap, taken in 2007 by Cassini (right) (NASA/JPL-Caltech/Space Science Institute)._
 
 <img width="1919" height="910" alt="radial_v" src="https://github.com/user-attachments/assets/aa0fcc80-d485-4077-b9a9-68fd38f05377" />
@@ -341,8 +341,8 @@ _Figure 11: Locations of Janus and Epimetheus in a top-down view. The diagram ab
 
 Janus and Epimetheus are two moons that orbit in roughly the same radius, swapping orbits and exchanging momentum periodically every 4 years. In order to model this, the Verlet method had to be used, as well as the Cowell method to get every position continuously rather than after discrete intervals in time. Initialising Janus to $`r=151,460~km`$, and Epimetheus to $`r=151,410~km`$ produced a 4-year periodicity, matching observational data.[^Paper_15]
 
-<img width="503" alt="januslinegraph5" src="https://github.com/user-attachments/assets/231eb220-1e20-4ab9-a651-6f49bcc22a8c" />
-<img width="503" alt="saturnringdensitygraph_janus_epimetheus2" src="https://github.com/user-attachments/assets/e52409f9-940f-4bc7-8ebe-970551460dd8" />
+<img width="410" alt="januslinegraph5" src="https://github.com/user-attachments/assets/231eb220-1e20-4ab9-a651-6f49bcc22a8c" />
+<img width="410" alt="saturnringdensitygraph_janus_epimetheus2" src="https://github.com/user-attachments/assets/e52409f9-940f-4bc7-8ebe-970551460dd8" />
 
 _Figure 12: Line graphs of radial positions (left) and ring particle density (right) for 10,000 particles close to the 2:1 ILR of Janus. Total simulation time: $\sim25.8$yrs. (Dhanushka Jayagoda, 2022)_
 
