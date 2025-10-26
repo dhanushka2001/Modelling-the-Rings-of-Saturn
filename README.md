@@ -4,9 +4,9 @@ This was my Final Year Project at the University of Warwick in 2022, which was g
 
 Degree: BSc Mathematics and Physics
 
-My thesis paper: https://drive.google.com/file/d/1HvYnVZAVaakcHQqrsdpO8QMVmfxp50X4/view?usp=sharing
+[My thesis paper](https://drive.google.com/file/d/1HvYnVZAVaakcHQqrsdpO8QMVmfxp50X4/view?usp=sharing)
 
-PX319 Project List 2021-22: https://drive.google.com/file/d/1BXwNT60hRM-PJHbrFmTNUYFMOWn1Kz01/view?usp=sharing
+[PX319 Project List 2021-22](https://drive.google.com/file/d/1BXwNT60hRM-PJHbrFmTNUYFMOWn1Kz01/view?usp=sharing)
 
 <!--
 > more text
@@ -110,10 +110,9 @@ Science Institute)._
 
 Saturn's rings are a majestic sight, with its radial symmetry, they exhibit many interesting features, from spiral density waves to the multitude of gaps. Some of these gaps are due to orbital resonances from Saturn's moons, one of the most notable being the Huygens gap, caused by the 2:1 inner Lindblad resonance (ILR) from Mimas.[^Paper_4] A ring particle in this location would have an orbital period half that of Mimas. Other gaps are caused by moons inside the rings, which produces a wake at the gap boundary. However, there are some gaps that are yet to be fully explained, some have proposed asteroid impacts,[^Paper_3] as well as interparticle collisions and excitation of density waves.[^Paper_2] This project aims to simulate these mechanisms, particularly, resonances, embedded moons, and spiral density waves, to see if they match with observation and theory.
 
-[^Paper_4]: K. Baillié et al., Formation of the Cassini Division – I. Shaping the rings by Mimas inward
-migration, 2933 (2019).
-[^Paper_2]: J. J. Lissauer, J. N. Cuzzi, Resonances in Saturn's Rings, Astronomical Journal **87**, 1052 (1982).
-[^Paper_3]: C. Kendrick, B. Kendrick, Computer Simulation of Saturn’s Ring Structure, 15 (2013).
+[^Paper_4]: [K. Baillié et al., Formation of the Cassini Division – I. Shaping the rings by Mimas inward migration, Monthly Notices of the Royal Astronomical Society, 2933 (2019).](https://academic.oup.com/mnras/article/486/2/2933/5364573)
+[^Paper_2]: [J. J. Lissauer, J. N. Cuzzi, Resonances in Saturn's Rings, Astronomical Journal **87**, 1052 (1982).](https://adsabs.harvard.edu/pdf/1982AJ.....87.1051L)
+[^Paper_3]: [C. Kendrick, B. Kendrick, Computer Simulation of Saturn’s Ring Structure, 15 (2013).](https://drive.google.com/file/d/1jV_VsJOvCTXmZS-OiWrIcpOdBpUnkLyv/view?usp=sharing)
 
 [<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/5ecf5417-5057-453a-b628-a17fd3dcbb67" />](https://ciclops.org/view/8489/The-Realm-of-Daphnis.html)
 _Figure 2: A picture of Daphnis, a shepherding moon, first discovered by Cassini in 2005, taken by Cassini in 2017, leaving a wavy wake behind and in front of it (NASA/JPL-Caltech/Space Science Institute)._
@@ -127,12 +126,11 @@ In recent years, NASA's Cassini probe has given us clear images of Saturn and it
 
 Recent discoveries have found many exoplanets with ring systems much larger than Saturn's.[^Paper_5][^Paper_7] Understanding how Saturn's rings form can help to understand how much larger ring systems can form. Furthermore, the underlying physics behind ring structure formation, in particular, perturbation and resonance, is identical to that which forms spiral galaxies,[^Paper_6] as was first proposed by Goldreich and Tremaine,[^Paper_12] as well as accretion disk structure.[^Paper_8]
 
-[^Paper_5]: S. Rieder, M. A. Kenworthy, Constraints on the size and dynamics of the J1407b ring system, A&A **596**, A9 (2016).
-[^Paper_6]: T. C. Junqueira et al., A new model for gravitational potential perturbations in disks of spiral galaxies. An application to our Galaxy, A&A **550**, A91 (2013).
-[^Paper_7]: N. C. Santos et al., Detecting ring systems around exoplanets using high resolution spectroscopy: the case of 51Pegb, Earth and Planetary Astrophysics (2015).
-[^Paper_8]: O. Donmez, Numerical simulation of small perturbation on an accretion disk
-due to the collision of a star with the disk near the black hole, Astrophysics and Space Science **305**, 187 (2006).
-[^Paper_12]: P. Goldreich, S. Tremaine, The excitation and evolution of density waves, Astrophysical Journal **222**, 850-858 (1978).
+[^Paper_5]: [S. Rieder, M. A. Kenworthy, Constraints on the size and dynamics of the J1407b ring system, A&A **596**, A9 (2016).](https://www.aanda.org/articles/aa/full_html/2016/12/aa29567-16/aa29567-16.html)
+[^Paper_6]: [T. C. Junqueira et al., A new model for gravitational potential perturbations in disks of spiral galaxies. An application to our Galaxy, A&A **550**, A91 (2013).](https://www.aanda.org/articles/aa/full_html/2013/02/aa19769-12/aa19769-12.html)
+[^Paper_7]: [N. C. Santos et al., Detecting ring systems around exoplanets using high resolution spectroscopy: the case of 51Pegb, Earth and Planetary Astrophysics (2015).](https://www.aanda.org/articles/aa/full_html/2015/11/aa26673-15/aa26673-15.html)
+[^Paper_8]: [O. Donmez, Numerical simulation of small perturbation on an accretion disk due to the collision of a star with the disk near the black hole, Astrophysics and Space Science **305**, 187 (2006).](https://arxiv.org/abs/astro-ph/0604249)
+[^Paper_12]: [P. Goldreich, S. Tremaine, The excitation and evolution of density waves, Astrophysical Journal **222**, 850-858 (1978).](https://adsabs.harvard.edu/pdf/1978ApJ...222..850G)
 
 In most cases, the perturbations from a moon do not accumulate on a particle, but get overpowered by the gravity of Saturn. However, if a particle and moon's orbital frequency are an integer ratio, the moon will periodically appear in the same location for the particle, which leads to gravitational perturbations accumulating, and causing the particle's orbit to become eccentric. This is one of the mechanisms that causes a visible gap to form in the ring.
 
@@ -182,8 +180,8 @@ Letting $`k=T/T_s`$ denote the ratio of the orbital periods, we can see that Eq.
  
 Saturn also features two moons, Janus and Epimetheus, that are in a co-orbital configuration, which is the only configuration of its kind with two moons, in the Solar System.[^Paper_15] Janus and Epimetheus have orbital radii that are closer than their own diameters, yet they do not collide, but rather periodically exchange momentum and switch orbital radii every 4 years.[^Paper_15] Janus, the more massive of the two, is said to create the most visible spiral density waves from its excited 2:1 Lindblad resonance site, due to its oscillatory orbit.[^Paper_16]
 
-[^Paper_15]: M. El Moutamid et al., How Janus’ orbital swap affects the edge of Saturn’s A ring?, Icarus **279**, 125, (2016).
-[^Paper_16]: J. E. Colwell et al., Saturn from Cassini-Huygens, **13**, 392, (2009).
+[^Paper_15]: [M. El Moutamid et al., How Janus’ orbital swap affects the edge of Saturn’s A ring?, Icarus **279**, 125, (2016).](https://arxiv.org/abs/1510.00434)
+[^Paper_16]: [J. E. Colwell et al., Saturn from Cassini-Huygens, **13**, 392, (2009).](https://link.springer.com/book/10.1007/978-1-4020-9217-6)
 
 </details>
 
@@ -218,7 +216,7 @@ Because of the improvement in stability, velocity Verlet will be the method used
 
 From Kepler's third law, we are given that,[^Paper_14]
 
-[^Paper_14]: R. R. Bate, D. D. Mueller, J. E. White, Fundamentals of astrodynamics, 9, 193, 221 (1971).
+[^Paper_14]: [R. R. Bate, D. D. Mueller, J. E. White, Fundamentals of astrodynamics, 9, 193, 221 (1971).](https://cmp.felk.cvut.cz/~kukelova/pajdla/Bate,%20Mueller,%20and%20White%20-%20Fundamentals%20of%20Astrodynamics.pdf)
 
 <p align="center">
 $T^2 = \left(\frac{4\pi^2}{Gm_p}\right)R^3,$ &nbsp;&nbsp;&nbsp;&nbsp; (7) <br><br>
@@ -239,7 +237,7 @@ $\ddot{\vec{r_i}} = G \cdot \sum_{j\neq i} \frac{m_j}{r_{ij}^3} \vec{r_{ij}},$ &
 
 With $`n`$ ring particles, the total interactions amounts to $`n(n-1)/2`$, which is of order $`\mathcal{O}(n^2)`$. In the interest of speed, the particles in the Verlet method simulation will be modelled as non-interacting, only interacting with Saturn and its moons, which is of order $`\mathcal{O}(n)`$ interactions. In reality, ring particles will experience self-gravity with neighbouring particles, however Keplerian shear mostly prevents this from becoming dominant.[^Paper_13]
 
-[^Paper_13]: C. Murray, Saturn's dynamical rings, Physics Today **60**, 8, 74 (2007).
+[^Paper_13]: [C. Murray, Saturn's dynamical rings, Physics Today **60**, 8, 74 (2007).](https://physicstoday.aip.org/quick-study/saturns-dynamical-rings)
 
 ### B. Special perturbation methods: Cowell and Encke
 
@@ -290,7 +288,7 @@ Almost all of Saturn's moons can be modelled much faster this way, rather than u
 
 In order to model the wake trails left by embedded moons, interparticle collisions can no longer be ignored. A small region near the moon will be considered, and area discretised so that a $`4~km`$-by-$`4~km`$ region is represented by one grid square, with a unique density, $`\rho_i`$, and velocity, $`\vec{v_i}`$. Gauss-Seidel iteration will be used to solve the Forward-Time Centered-Space (FTCS) approximation of the unsteady 2D diffusion equation.[^Paper_17] The gravitational interaction from the satellite, modelled in the centre of the grid, will evolve the velocity field and the explicit Euler method will be used to solve the advection equations. For the boundary conditions, density will be allowed to flow out of the system, as source terms will be included in the sides to account for the Keplerian shear flow. The frame of the moon is non-inertial, as it is orbiting and rotating, which keeps Saturn directly above the system. Given the region is small, the fictitious force from the frame orbiting will cancel with the centripetal force from the particles, and any horizontal component remaining is negligible compared to the interaction with the moon. Likewise for the fictitious forces arising from the frame rotating.
 
-[^Paper_17]: J. D. Hoffman, Numerical Methods for Engineers and Scientists, 546, (1992).
+[^Paper_17]: [J. D. Hoffman, Numerical Methods for Engineers and Scientists, 546, (1992).](http://freeit.free.fr/Finite%20Element/Hoffman,_Numerical_Methods_for_Engineers&Scientists,2001.pdf)
 
 </details>
 
