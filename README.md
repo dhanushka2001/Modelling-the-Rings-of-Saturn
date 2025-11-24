@@ -332,6 +332,11 @@ _Figure 9: Image of the Huygens gap taken by Cassini in 2006 (left), annotated i
 
 _Figure 10: The two diagrams above show the difference in radial velocity for eccentricity $`e=0`$ (left), and $`e=0.0196`$ (right). Simulation time: $`\sim25.8~yrs`$. (Dhanushka Jayagoda, 2022)_
 
+Below is a stacked image showing the locations of the $`10,000`$ ring particles around Saturn after a period of time, being influenced by Mimas. The 2:1 resonance is the Huygen's gap.
+
+<img width="2311" height="2054" alt="saturn4" src="https://github.com/user-attachments/assets/cb504d39-0c84-4ebb-900b-1c9e696b58b2" />
+
+
 ### C. Co-orbital moons
 
 [<img width="3849" alt="radial_v" src="https://github.com/user-attachments/assets/9643c067-8f26-4752-ab0f-ec3e10f16908" />](https://www.youtube.com/watch?v=P12ifsFwC6k)
